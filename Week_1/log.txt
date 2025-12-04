@@ -1,0 +1,10 @@
+INFO: System startup complete
+INFO: User john logged in
+WARN: Disk space at 85%
+INFO: Scheduled task executed
+ERROR: Failed to connect to database
+INFO: Process 421 started
+login failed from 192.168.1.45
+WARN: High memory usage
+INFO: Update check passed
+ERROR: Configuration file missing
