@@ -2,7 +2,27 @@
 # include <string.h>
 # include <stdlib.h>
 
+struct IpCount {
+    char ip[64];
+    int count;
+};
+
+void add_or_increment(struct IpCount *array, int *size, const char *ip){
+    for (int i = 0; i < *size; i++){
+        if (strcmp(array[i].ip, ip) == 0){
+            array[i].count++;
+            return;
+        }
+    }
+
+    strcpy(array[*size].ip, ip);
+    array[*size].count = 1;
+    (*size)++;
+}
+
+
 // Jan 31 07:12:03 debian sshd[1502]: Accepted password for bob from 192.168.1.55 port 52341 ssh2
+// --> 192.168.1.55
 char *extract_ip_from_line(const char *line, char *out){
     const char *pointer_for_from = strstr(line, " from");
     if (!pointer_for_from) {
@@ -26,6 +46,8 @@ char *extract_ip_from_line(const char *line, char *out){
 int main(void){
     char buffer[255];
     char ip[64];
+    struct IpCount ip_stats[1024];
+    int ip_stats_size = 0;
     FILE *fp = fopen("fake_auth_log.txt", "r");
     int ssh_failed_password_attempts = 0;
     int ssh_success_password_attempts = 0;
@@ -48,6 +70,10 @@ int main(void){
         } else if (strstr(buffer, "sudo") && strstr(buffer, "user root")){
             sudo_escalations++;
         }
+
+        if (extract_ip_from_line(buffer, ip) != NULL){
+            add_or_increment(ip_stats, &ip_stats_size, ip);
+        }
     }
 
     if (fclose(fp) == EOF){
@@ -61,10 +87,13 @@ int main(void){
     printf("Sudo Escalations: %d\n", sudo_escalations);
 
     if (ssh_failed_password_attempts > 10){
-        printf("Possible bruteforce detected!"\n);
+        printf("Possible bruteforce detected!\n");
     }
 
-    printf("%s", extract_ip_from_line("Jan 31 07:12:03 debian sshd[1502]: Accepted password for bob from 192.168.1.55 port 52341 ssh2", ip));
+    printf("--- IP STATS ---\n");
+    for (int i = 0; i < ip_stats_size; i++){
+        printf("%s -> %d fois\n", ip_stats[i].ip, ip_stats[i].count);
+    }
 
     return 0;
 }
