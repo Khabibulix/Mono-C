@@ -17,7 +17,7 @@ This project is part of a broader Purple Team learning path focused on low‑lev
 
 - Reads /var/log/auth.log line by line.
 
-- Displays only lines matching key events:
+✔️ Counts occurences for these events:
 
     - Failed password
 
@@ -26,8 +26,6 @@ This project is part of a broader Purple Team learning path focused on low‑lev
     - Invalid user
 
     - sudo:
-
-    - CRON:
 
 ## 📌 Future Improvements (Tier 2+)
 
