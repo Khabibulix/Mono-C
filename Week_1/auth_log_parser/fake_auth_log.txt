@@ -1,3 +1,33 @@
+Jan 31 00:02:11 debian sshd[100]: Failed password for invalid user admin from 203.0.113.10 port 40001 ssh2
+Jan 31 00:02:12 debian sshd[100]: Failed password for invalid user test from 203.0.113.10 port 40001 ssh2
+Jan 31 00:02:14 debian sshd[100]: Connection closed by 203.0.113.10 port 40001 [preauth]
+
+Jan 31 00:15:22 debian sshd[122]: Failed password for root from 203.0.113.85 port 41011 ssh2
+Jan 31 00:15:24 debian sshd[122]: Failed password for root from 203.0.113.85 port 41011 ssh2
+Jan 31 00:15:25 debian sshd[122]: Connection reset by 203.0.113.85 port 41011 [preauth]
+
+Jan 31 01:03:10 debian CRON[200]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan 31 01:03:10 debian CRON[200]: pam_unix(cron:session): session closed for user root
+
+Jan 31 01:55:01 debian sshd[300]: Accepted password for alice from 192.168.1.40 port 50200 ssh2
+Jan 31 01:55:01 debian sshd[300]: pam_unix(sshd:session): session opened for user alice(uid=1000) by (uid=0)
+Jan 31 02:15:33 debian sshd[300]: pam_unix(sshd:session): session closed for user alice(uid=1000)
+
+Jan 31 02:30:20 debian sshd[330]: Invalid user www from 203.0.113.85 port 42020
+Jan 31 02:30:22 debian sshd[330]: Failed password for invalid user www from 203.0.113.85 port 42020 ssh2
+Jan 31 02:30:24 debian sshd[330]: Connection reset by 203.0.113.85 port 42020 [preauth]
+
+Jan 31 03:11:09 debian sshd[410]: Failed password for admin from 198.51.100.24 port 43001 ssh2
+Jan 31 03:11:11 debian sshd[410]: Failed password for admin from 198.51.100.24 port 43001 ssh2
+Jan 31 03:11:12 debian sshd[410]: Failed password for admin from 198.51.100.24 port 43001 ssh2
+
+Jan 31 04:00:01 debian CRON[520]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
+Jan 31 04:00:01 debian CRON[520]: pam_unix(cron:session): session closed for user root
+
+Jan 31 05:12:33 debian sshd[600]: Failed password for root from 203.0.113.200 port 44055 ssh2
+Jan 31 05:12:35 debian sshd[600]: Failed password for root from 203.0.113.200 port 44055 ssh2
+Jan 31 05:12:37 debian sshd[600]: Connection closed by 203.0.113.200 port 44055 [preauth]
+
 Jan 31 06:12:11 debian sshd[1301]: Accepted password for alice from 192.168.1.40 port 51000 ssh2
 Jan 31 06:12:11 debian sshd[1301]: pam_unix(sshd:session): session opened for user alice(uid=1000) by (uid=0)
 
@@ -31,6 +61,7 @@ Jan 31 10:32:20 debian sshd[1900]: pam_unix(sshd:session): session closed for us
 
 Jan 31 11:11:07 debian sshd[1980]: Failed password for www-data from 203.0.113.85 port 60122 ssh2
 Jan 31 11:11:08 debian sshd[1980]: Invalid user www-data from 203.0.113.85 port 60122
+
 Jan 31 12:01:01 debian CRON[2101]: pam_unix(cron:session): session opened for user root(uid=0) by (uid=0)
 Jan 31 12:01:01 debian CRON[2101]: pam_unix(cron:session): session closed for user root
 
@@ -51,6 +82,7 @@ Jan 31 15:55:33 debian sshd[2501]: pam_unix(sshd:session): session closed for us
 Jan 31 16:23:12 debian sshd[2604]: Failed password for invalid user admin from 203.0.113.85 port 64002 ssh2
 Jan 31 16:23:14 debian sshd[2604]: Failed password for invalid user git from 203.0.113.85 port 64002 ssh2
 Jan 31 16:23:17 debian sshd[2604]: Failed password for root from 203.0.113.85 port 64002 ssh2
+
 Jan 31 18:04:12 debian sshd[2701]: Failed password for root from 203.0.113.85 port 65010 ssh2
 Jan 31 18:04:13 debian sshd[2701]: Accepted password for root from 203.0.113.85 port 65010 ssh2
 Jan 31 18:04:13 debian sshd[2701]: pam_unix(sshd:session): session opened for user root(uid=0) by (uid=0)

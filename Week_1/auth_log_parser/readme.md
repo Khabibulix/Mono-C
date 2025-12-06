@@ -13,29 +13,6 @@ This project is part of a broader Purple Team learning path focused on low‑lev
 
 - Build practical Blue Team reflexes through real log parsing.
 
-## 🧠 What It Does (Tier 1)
-
-- Reads /var/log/auth.log line by line.
-
-✔️ Counts occurences for these events:
-
-    - Failed password
-
-    - Accepted password
-
-    - Invalid user
-
-    - sudo:
-
-## 📌 Future Improvements (Tier 2+)
-
-- Count SSH failures / detect brute force attempts.
-
-- Extract and aggregate IP addresses.
-
-- Generate a simple alert-style report.
-
-- Add timestamp parsing and JSON export.
 
 ## 💡 Learning Goals
 
