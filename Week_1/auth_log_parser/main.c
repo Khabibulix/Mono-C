@@ -1,11 +1,50 @@
 # include <stdio.h>
 # include <string.h>
 # include <stdlib.h>
+# include <ctype.h> //isdigit
 
 struct IpCount {
     char ip[64];
     int count;
 };
+
+int is_valid_ipv4(const char *ip){
+    int dots_count = 0;
+    int num = 0;
+    int length = 0;
+
+    for (int i = 0; ip[i]; i++){
+
+        if (ip[i] == '.'){
+
+            if (length == 0 || num > 255){
+                return 0;
+            }
+
+            dots_count++;
+            num = 0;
+            length = 0;
+            continue;
+        }
+
+        if (!isdigit((unsigned char) ip[i])){
+            return 0;
+        }
+
+        num = num * 10 + (ip[i] - '0');
+        length++;
+        if (length > 3){
+            return 0;
+        }
+    }
+
+    if (dots_count != 3 || num > 255 || length == 0){
+        return 0;
+    }
+
+    return 1;
+
+}
 
 void add_or_increment(struct IpCount *array, int *size, const char *ip){
     for (int i = 0; i < *size; i++){
@@ -43,6 +82,7 @@ char *extract_ip_from_line(const char *line, char *out){
 }
 
 
+
 int main(void){
     char buffer[255];
     char ip[64];
@@ -71,7 +111,7 @@ int main(void){
             sudo_escalations++;
         }
 
-        if (extract_ip_from_line(buffer, ip) != NULL){
+        if (extract_ip_from_line(buffer, ip) && is_valid_ipv4(ip)){
             add_or_increment(ip_stats, &ip_stats_size, ip);
         }
     }
