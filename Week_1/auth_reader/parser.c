@@ -3,22 +3,31 @@
 # include <ctype.h>
 # include <stdio.h>
 
+/*PATTERNS TABLE*/
+
+typedef struct 
+{
+    EventType type;
+    const char *patterns[4];
+} EventPatterns;
+
+static EventPatterns event_patterns[] = {
+    {EVENT_SSH_FAIL, {"Failed password", "authentification failure", NULL} },
+    {EVENT_SSH_SUCCESS, {"Accepted password", NULL} },
+    {EVENT_INVALID_USER, {"Invalid user", NULL} },
+    {EVENT_SUDO, {"sudo", "USER=root", NULL} },
+};
+
 
 EventType detect_event_type(const char *line){
-    if (strstr(line, "Failed password")){
-        return EVENT_SSH_FAIL;
+  for (size_t i = 0; i < sizeof(event_patterns)/sizeof(event_patterns[0]); i++) {
+    for (int j = 0; event_patterns[i].patterns[j] != NULL; j++){
+        if (strstr(line, event_patterns[i].patterns[j])){
+            return event_patterns[i].type;
+        }
     }
-    if (strstr(line, "Accepted password")){
-        return EVENT_SSH_SUCCESS;
-    }
-    if (strstr(line, "Invalid user")){
-        return EVENT_INVALID_USER;
-    }
-    if (strstr(line, "sudo") && strstr(line, "USER=root")){
-        return EVENT_SUDO;
-    }
-
-    return EVENT_UNKNOWN;
+  }
+  return EVENT_UNKNOWN;
 }
 
 
