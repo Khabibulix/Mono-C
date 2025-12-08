@@ -46,10 +46,11 @@ int main(void){
             continue;
         }
 
+        const char *type_str = event_type_to_string(ev.type);
         printf("TYPE: %s | USER: %s | IP: %s | PORT: %d\n",
-                event_type_to_string(ev.type),
-                ev.user, 
-                ev.ip, 
+                type_str ? type_str : "UNKNOWN",
+                ev.user ? ev.user : "(none)", 
+                ev.ip ? ev.ip : "(none)", 
                 ev.port);
         
         switch(ev.type){
