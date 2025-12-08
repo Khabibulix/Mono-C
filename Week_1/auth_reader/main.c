@@ -18,8 +18,7 @@ void add_or_increment(struct IpCount *array, int *size, const char *ip){
             return;
         }
     }
-
-    strcpy(array[*size].ip, ip);
+    snprintf(array[*size].ip, sizeof(array[*size].ip), "%s", ip);
     array[*size].count = 1;
     (*size)++;
 }
