@@ -70,41 +70,72 @@ int parse_line(const char *line, Event *ev){
 
 
 int is_valid_ipv4(const char *ip){
-    int dots_count = 0;
-    int num = 0;
-    int length = 0;
-
-    for (int i = 0; ip[i]; i++){
-
-        if (ip[i] == '.'){
-
-            if (length == 0 || num > 255){
-                return 0;
-            }
-
-            dots_count++;
-            num = 0;
-            length = 0;
-            continue;
-        }
-
-        if (!isdigit((unsigned char) ip[i])){
-            return 0;
-        }
-
-        num = num * 10 + (ip[i] - '0');
-        length++;
-        if (length > 3){
-            return 0;
-        }
-    }
-
-    if (dots_count != 3 || num > 255 || length == 0){
+    if (ip == NULL || *ip == '\0'){
         return 0;
     }
 
-    return 1;
+    char buf[32];
+    size_t len = strlen(ip);
 
+    // Ipv4 mas length is '255.255.255.255'
+    if (len < 7 || len > 15){
+        return 0;
+    }
+
+    //Force Null termination after copy
+    strncpy(buf, ip, sizeof(buf) - 1);
+    buf[sizeof(buf) - 1] = '\0';
+
+    char *p = buf;
+    int segments = 0;
+
+    while (*p){
+        
+        if (!isdigit((unsigned char)*p)){
+            return 0;
+        }
+
+        //No leading zeroes
+        if (*p == '0' && isdigit((unsigned char)*(p+1))){
+            return 0;
+        }
+
+        int num = 0;
+        int digits = 0;
+
+        while(isdigit((unsigned char)*p)){
+            num = num * 10 + (*p - '0');
+            if (num > 255){
+                return 0;
+            }
+
+            digits++;
+            if (digits > 3){
+                return 0;
+            }
+
+            p++;
+        }
+
+        segments++;
+
+        //No trailing dots
+        if (*p == '.') {
+            if (segments >= 4) {
+                return 0;
+            }
+            p++;
+            continue;
+        }
+
+        if (*p == '\0'){
+            break;
+        }
+
+        return 0;
+    }
+
+    return (segments == 4);
 }
 
 
