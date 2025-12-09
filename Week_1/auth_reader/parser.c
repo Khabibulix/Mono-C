@@ -30,6 +30,22 @@ EventType detect_event_type(const char *line){
   return EVENT_UNKNOWN;
 }
 
+static void parse_ssh_auth(const char *line, Event *ev){
+    sscanf(line, "%*s %*s %*s %*s %*s %*s %*s for %63s from %63s port %d", ev->user, ev->ip, &ev->port);
+}
+
+static void parse_invalid_user(const char *line, Event *ev){
+    sscanf(line, "%*s %*s %*s %*s %*s %*s %*s Invalid user %63s from %63s port %d", ev->user, ev->ip, &ev->port);
+}
+
+static void parse_sudo(const char *line, Event *ev){
+    sscanf(line, "%*s %*s %*s %*s sudo: %63s", ev->user);
+
+    if (ev->user[0] != '\0'){
+        strcpy(ev->ip, "-");
+        ev->port = 0;
+    }
+}
 
 int parse_line(const char *line, Event *ev){
     memset(ev, 0, sizeof(Event));
@@ -40,30 +56,16 @@ int parse_line(const char *line, Event *ev){
     switch (ev->type){
         case EVENT_SSH_SUCCESS:
         case EVENT_SSH_FAIL:
-            if (sscanf(line,
-                "%*s %*s %*s %*s %*s %*s %*s for %63s from %63s port %d",
-                ev->user, ev->ip, &ev->port) == 3){
-                    return 1;
-                }
-            break;
+            parse_ssh_auth(line, ev);
+            return 1;
         case EVENT_INVALID_USER:
-        if (sscanf(line,
-            "%*s %*s %*s %*s %*s %*s %*s Invalid user %63s from %63s port %d",
-            ev->user, ev->ip, &ev->port) == 3){
-                return 1;
-            }
-            break;
+            parse_invalid_user(line, ev);
+            return 1;
         case EVENT_SUDO:
-            if (sscanf(line,
-                "%*s %*s %*s %*s sudo: %63s",
-                ev->user) == 1) {
-                    strcpy(ev->ip, "-");
-                    ev->port = 0;
-                    return 1;
-                }
-                break;
+            parse_sudo(line, ev);
+            return 1;
         default:
-                return 0;
+            return 0;
     }
     return 0;
 }
