@@ -19,7 +19,6 @@ typedef struct{
 
 EventType detect_event_type(const char *line);
 int parse_line(const char *line, Event *ev);
-int is_valid_ipv4(const char *ip);
 const char* event_type_to_string(EventType t);
 
 #endif

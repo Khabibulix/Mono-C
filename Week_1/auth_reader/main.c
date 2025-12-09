@@ -2,8 +2,9 @@
 # include <string.h>
 # include <stdlib.h>
 # include <ctype.h> //isdigit
-# include "parser.h"
 
+# include "parser.h"
+# include "validator.h"
 
 struct IpCount {
     char ip[64];
@@ -46,6 +47,10 @@ int main(void){
             continue;
         }
 
+        if (!validate_event(&ev)){
+            continue;
+        }
+
         const char *type_str = event_type_to_string(ev.type);
         printf("TYPE: %s | USER: %s | IP: %s | PORT: %d\n",
                 type_str ? type_str : "UNKNOWN",
@@ -70,9 +75,8 @@ int main(void){
                 break;
         }
 
-        if (is_valid_ipv4(ev.ip)) {
-            add_or_increment(ip_stats, &ip_stats_size, ev.ip);
-        }
+        add_or_increment(ip_stats, &ip_stats_size, ev.ip);
+
 
 
     
