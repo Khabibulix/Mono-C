@@ -1,10 +1,10 @@
 # include <stdio.h>
 # include <string.h>
 # include <stdlib.h>
-# include <ctype.h> //isdigit
 
 # include "parser.h"
 # include "validator.h"
+# include "stats.h"
 
 struct IpCount {
     char ip[64];
@@ -28,12 +28,8 @@ void add_or_increment(struct IpCount *array, int *size, const char *ip){
 int main(void){
     Event ev;
     char buffer[255];
-    struct IpCount ip_stats[1024];
-    int ssh_failed_password_attempts = 0;
-    int ssh_success_password_attempts = 0;
-    int invalid_user_connections = 0;
-    int sudo_escalations = 0;
-    int ip_stats_size = 0;
+    Stats stats;
+    stats_init(&stats);
     FILE *fp = fopen("fake_auth_log.txt", "r");
 
 
@@ -43,6 +39,7 @@ int main(void){
     }
 
     while (fgets(buffer, sizeof buffer, fp) != NULL){
+
         if (!parse_line(buffer, &ev)){
             continue;
         }
@@ -58,25 +55,8 @@ int main(void){
                 ev.ip ? ev.ip : "(none)", 
                 ev.port);
         
-        switch(ev.type){
-            case EVENT_SSH_FAIL:
-                ssh_failed_password_attempts++;
-                break;
-            case EVENT_SSH_SUCCESS:
-                ssh_success_password_attempts++;
-                break;
-            case EVENT_INVALID_USER:
-                invalid_user_connections++;
-                break;
-            case EVENT_SUDO:
-                sudo_escalations++;
-                break;
-            default:
-                break;
-        }
-
-        add_or_increment(ip_stats, &ip_stats_size, ev.ip);
-    
+        stats_update(&stats, &ev);
+            
     }
 
     if (fclose(fp) == EOF){
@@ -84,10 +64,7 @@ int main(void){
         return EXIT_FAILURE;
     }
 
-    printf("--- IP STATS ---\n");
-    for (int i = 0; i < ip_stats_size; i++){
-        printf("%s -> %d fois\n", ip_stats[i].ip, ip_stats[i].count);
-    }
+    stats_print(&stats);
 
     return 0;
 }

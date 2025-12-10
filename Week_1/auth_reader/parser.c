@@ -9,13 +9,6 @@ static void parse_sudo(const char *line, Event *ev);
 
 //-----------------------Structures----------------------------------------------------------------------
 
-static const char *event_names[] = {
-    [EVENT_SSH_FAIL] = "SSH_FAIL",
-    [EVENT_SSH_SUCCESS] = "SSH_SUCCESS",
-    [EVENT_INVALID_USER] = "INVALID_USER",
-    [EVENT_SUDO] = "SUDO",
-    [EVENT_UNKNOWN] = "UNKNOWN"
-};
 
 typedef struct 
 {
@@ -86,8 +79,4 @@ int parse_line(const char *line, Event *ev){
     parse_rules[rule_index].parse_fn(line, ev);
 
     return 1;
-}
-
-const char* event_type_to_string(EventType event){
-    return event_names[event] ? event_names[event] : "UNKNOWN";
 }
