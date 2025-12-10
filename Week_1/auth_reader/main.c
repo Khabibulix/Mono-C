@@ -76,9 +76,6 @@ int main(void){
         }
 
         add_or_increment(ip_stats, &ip_stats_size, ev.ip);
-
-
-
     
     }
 

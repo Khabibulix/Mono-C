@@ -17,7 +17,7 @@ typedef struct{
     char raw[256];
 } Event;
 
-EventType detect_event_type(const char *line);
+int detect_event_rule(const char *line);
 int parse_line(const char *line, Event *ev);
 const char* event_type_to_string(EventType t);
 

@@ -3,31 +3,57 @@
 # include <ctype.h>
 # include <stdio.h>
 
-/*PATTERNS TABLE*/
+static void parse_ssh_auth(const char *line, Event *ev);
+static void parse_invalid_user(const char *line, Event *ev);
+static void parse_sudo(const char *line, Event *ev);
+
+//-----------------------Structures----------------------------------------------------------------------
+
+static const char *event_names[] = {
+    [EVENT_SSH_FAIL] = "SSH_FAIL",
+    [EVENT_SSH_SUCCESS] = "SSH_SUCCESS",
+    [EVENT_INVALID_USER] = "INVALID_USER",
+    [EVENT_SUDO] = "SUDO",
+    [EVENT_UNKNOWN] = "UNKNOWN"
+};
 
 typedef struct 
 {
     EventType type;
     const char *patterns[4];
-} EventPatterns;
+    void (*parse_fn)(const char *line, Event *ev);
+} ParseRule;
 
-static EventPatterns event_patterns[] = {
-    {EVENT_SSH_FAIL, {"Failed password", "authentification failure", NULL} },
-    {EVENT_SSH_SUCCESS, {"Accepted password", NULL} },
-    {EVENT_INVALID_USER, {"Invalid user", NULL} },
-    {EVENT_SUDO, {"sudo", "USER=root", NULL} },
+static ParseRule parse_rules[] = {
+    {EVENT_SSH_FAIL,
+        {"Failed password", "authentification failure", NULL}, 
+        parse_ssh_auth },
+
+    {EVENT_SSH_SUCCESS,
+        {"Accepted password", NULL},
+        parse_ssh_auth },
+
+    {EVENT_INVALID_USER,
+        {"Invalid user", NULL},
+        parse_invalid_user },
+
+    {EVENT_SUDO,
+        {"sudo", "USER=root", NULL},
+        parse_sudo }
 };
 
 
-EventType detect_event_type(const char *line){
-  for (size_t i = 0; i < sizeof(event_patterns)/sizeof(event_patterns[0]); i++) {
-    for (int j = 0; event_patterns[i].patterns[j] != NULL; j++){
-        if (strstr(line, event_patterns[i].patterns[j])){
-            return event_patterns[i].type;
+//-----------------------Functions----------------------------------------------------------------------
+
+int detect_event_rule(const char *line){
+  for (size_t i = 0; i < sizeof(parse_rules)/sizeof(parse_rules[0]); i++) {
+    for (int j = 0; parse_rules[i].patterns[j] != NULL; j++){
+        if (strstr(line, parse_rules[i].patterns[j])){
+            return i;
         }
     }
   }
-  return EVENT_UNKNOWN;
+  return -1;
 }
 
 static void parse_ssh_auth(const char *line, Event *ev){
@@ -51,31 +77,17 @@ int parse_line(const char *line, Event *ev){
     memset(ev, 0, sizeof(Event));
     strncpy(ev->raw, line, sizeof(ev->raw)-1);
 
-    ev->type = detect_event_type(line);
-
-    switch (ev->type){
-        case EVENT_SSH_SUCCESS:
-        case EVENT_SSH_FAIL:
-            parse_ssh_auth(line, ev);
-            return 1;
-        case EVENT_INVALID_USER:
-            parse_invalid_user(line, ev);
-            return 1;
-        case EVENT_SUDO:
-            parse_sudo(line, ev);
-            return 1;
-        default:
-            return 0;
+    int rule_index = detect_event_rule(line);
+    if (rule_index < 0){
+        return 0;
     }
-    return 0;
+
+    ev->type = parse_rules[rule_index].type;
+    parse_rules[rule_index].parse_fn(line, ev);
+
+    return 1;
 }
 
 const char* event_type_to_string(EventType event){
-    switch(event){
-        case EVENT_SSH_FAIL: return "SSH_FAIL";
-        case EVENT_SSH_SUCCESS: return "SSH_SUCCESS";
-        case EVENT_INVALID_USER: return "INVALID_USER";
-        case EVENT_SUDO: return "SUDO";
-        default: return "UNKNOWN";
-    }
+    return event_names[event] ? event_names[event] : "UNKNOWN";
 }
